@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='fonts/font-awesome-4.7.0/css/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='vendor/animate/animate.css') }}" rel="stylesheet">
+    
+    <style>
+        html, body {
+            background-color: black !important;
+            color: cyan;
+            font-family: Arial, sans-serif;
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .wrap-login100 {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            box-shadow: 0px 0px 15px cyan;
+            width: 350px;
+        }
+
+        .login100-form-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: cyan;
+            margin-bottom: 20px;
+        }
+
+        .wrap-input100 {
+            margin-bottom: 15px;
+        }
+
+        .input100 {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid cyan;
+            border-radius: 5px;
+            font-size: 16px;
+            background: transparent;
+            color: cyan;
+            outline: none;
+        }
+
+        .input100::placeholder {
+            color: rgba(173, 216, 230, 0.8);
+        }
+
+        .container-login100-form-btn {
+            margin-top: 15px;
+        }
+
+        .login100-form-btn {
+            background: cyan;
+            color: black;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+            box-shadow: 0px 0px 10px cyan;
+        }
+
+        .login100-form-btn:hover {
+            background: black;
+            color: cyan;
+            border: 2px solid cyan;
+            box-shadow: 0px 0px 15px cyan;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrap-login100">
+        <form class="login100-form validate-form" action="/data" method="POST">
+            <span class="login100-form-title">
+                Admin Login
+            </span>
+
+            <div class="wrap-input100">
+                <input class="input100" type="text" name="username" placeholder="Username" required>
+            </div>
+
+            <div class="wrap-input100">
+                <input class="input100" type="password" name="pass" placeholder="Password" required>
+            </div>
+
+            <div class="container-login100-form-btn">
+                <button class="login100-form-btn">
+                    Login
+                </button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

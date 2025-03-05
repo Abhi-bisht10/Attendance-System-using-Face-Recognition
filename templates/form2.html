@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Attendance Database</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    <style>
+        body {
+            background-color: black;
+            color: cyan;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            color: cyan;
+        }
+
+        h3 {
+            font-size: 22px;
+            margin-bottom: 30px;
+            color: lightblue;
+        }
+
+        .table {
+            background: rgba(255, 255, 255, 0.1);
+            color: cyan;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table thead {
+            background: cyan;
+            color: black;
+            font-weight: bold;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(0, 255, 255, 0.2);
+        }
+
+        .btn {
+            background: cyan;
+            color: black;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            padding: 12px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px cyan;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn:hover {
+            background: black;
+            color: cyan;
+            border: 2px solid cyan;
+            box-shadow: 0px 0px 15px cyan;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Today's Attendance</h1>
+        <h3>Details of students present today:</h3>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Time</td>
+                    <td>Date</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row["NAME"] }}</td>
+                    <td>{{ row["Time"] }}</td>
+                    <td>{{ row["Date"] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <form action="/whole" method="post">
+            <button class="btn">View Whole Database</button>
+        </form>
+
+        <form action="/dashboard" method="post">
+            <button class="btn">View Attendance Dashboard</button>
+        </form>
+
+        <form action="/" method="GET">
+            <button class="btn">Go back to Home Page</button>
+        </form>
+    </div>
+</body>
+</html>
