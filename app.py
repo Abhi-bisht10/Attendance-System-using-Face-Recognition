@@ -1,16 +1,16 @@
-from flask import Flask,render_template,request
-from flask import session
+from flask import Flask, render_template, request
 import cv2
 import numpy as np
 import face_recognition
 import os
-from datetime import datetime
-from datetime import date
+from datetime import datetime, date
 import sqlite3
-import json
 import pandas as pd
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+from email.mime.text import MIMEText
 
-name="abhinav"
 app = Flask(__name__)
 
 @app.route('/new', methods=['GET', 'POST'])
@@ -24,27 +24,21 @@ def new():
 def name():
     if request.method == "POST":
         name1 = request.form['name1']
-        name2 = request.form['name2']
-
         cam = cv2.VideoCapture(0)
 
         while True:
             ret, frame = cam.read()
             if not ret:
-                print("Failed to grab frame")
                 break
             cv2.imshow("Press Space to capture image", frame)
-
             k = cv2.waitKey(1) & 0xFF
-            if k == 27:  
-                print("Escape hit, closing...")
+            if k == 27:
                 break
-            elif k == 32: 
+            elif k == 32:
                 img_name = name1 + ".png"
                 path = 'Training images'
                 cv2.imwrite(os.path.join(path, img_name), frame)
-                print(f"{img_name} written!")
-                break  
+                break
 
         cam.release()
         cv2.destroyAllWindows()
@@ -59,12 +53,10 @@ def recognize():
         images = []
         classNames = []
         myList = os.listdir(path)
-        print(myList)
         for cl in myList:
             curImg = cv2.imread(os.path.join(path, cl))
             images.append(curImg)
             classNames.append(os.path.splitext(cl)[0])
-        print(classNames)
 
         def findEncodings(images):
             encodeList = []
@@ -76,26 +68,24 @@ def recognize():
             return encodeList
 
         def markData(name):
-            print("The Attended Person is", name)
             now = datetime.now()
             dtString = now.strftime('%H:%M')
             today = date.today()
             conn = sqlite3.connect('information.db')
             conn.execute('''CREATE TABLE IF NOT EXISTS Attendance
                             (NAME TEXT NOT NULL, Time TEXT NOT NULL, Date TEXT NOT NULL)''')
-            conn.execute("INSERT OR IGNORE INTO Attendance (NAME, Time, Date) values (?,?,?)", (name, dtString, today))
+            conn.execute("INSERT INTO Attendance (NAME, Time, Date) values (?, ?, ?)", (name, dtString, today))
             conn.commit()
             conn.close()
 
         encodeListKnown = findEncodings(images)
-        print('Encoding Complete')
 
         cap = cv2.VideoCapture(0)
+        recognized = set()
 
         while True:
             success, img = cap.read()
             if not success:
-                print("Failed to grab frame")
                 break
 
             imgS = cv2.resize(img, (0, 0), None, 0.25, 0.25)
@@ -111,10 +101,12 @@ def recognize():
 
                 if matchIndex != -1 and faceDis[matchIndex] < 0.50:
                     name = classNames[matchIndex].upper()
-                    markData(name)
+                    if name not in recognized:
+                        markData(name)
+                        recognized.add(name)
                 else:
                     name = 'Unknown'
-                
+
                 y1, x2, y2, x1 = [v * 4 for v in faceLoc]
                 cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
                 cv2.rectangle(img, (x1, y2 - 35), (x2, y2), (0, 255, 0), cv2.FILLED)
@@ -130,124 +122,87 @@ def recognize():
     else:
         return render_template('main.html')
 
-
-@app.route('/login',methods = ['POST'])
-def login():
-    json_data = json.loads(request.data.decode())
-    username = json_data['username']
-    password = json_data['password']
-    df= pd.read_csv('cred.csv')
-    if len(df.loc[df['username'] == username]['password'].values) > 0:
-        if df.loc[df['username'] == username]['password'].values[0] == password:
-            session['username'] = username
-            return 'success'
-        else:
-            return 'failed'
-    else:
-        return 'failed'
-        
-
-
-@app.route('/checklogin')
-def checklogin():
-    if 'username' in session:
-        return session['username']
-    return 'False'
-
-
-@app.route('/how',methods=["GET","POST"])
+@app.route('/how', methods=["GET", "POST"])
 def how():
     return render_template('form.html')
-@app.route('/data',methods=["GET","POST"])
+
+@app.route('/data', methods=["GET", "POST"])
 def data():
-    '''user=request.form['username']
-    pass1=request.form['pass']
-    if user=="tech" and pass1=="tech@321" :
-    '''
-    if request.method=="POST":
-        today=date.today()
-        print(today)
+    if request.method == "POST":
+        today = date.today()
         conn = sqlite3.connect('information.db')
         conn.row_factory = sqlite3.Row
         cur = conn.cursor()
-        print ("Opened database successfully");
-        cursor = cur.execute("SELECT DISTINCT NAME,Time, Date from Attendance where Date=?",(today,))
-        rows=cur.fetchall()
-        print(rows)
-        for line in cursor:
-
-            data1=list(line)
-        print ("Operation done successfully");
+        cursor = cur.execute("SELECT DISTINCT NAME, Time, Date FROM Attendance WHERE Date=?", (today,))
+        rows = cur.fetchall()
         conn.close()
-
-        return render_template('form2.html',rows=rows)
+        return render_template('form2.html', rows=rows)
     else:
         return render_template('form1.html')
 
-
-            
-@app.route('/whole',methods=["GET","POST"])
+@app.route('/whole', methods=["GET", "POST"])
 def whole():
-    today=date.today()
-    print(today)
     conn = sqlite3.connect('information.db')
-    conn.row_factory = sqlite3.Row 
-    cur = conn.cursor() 
-    print ("Opened database successfully");
-    cursor = cur.execute("SELECT DISTINCT NAME,Time, Date from Attendance")
-    rows=cur.fetchall()    
-    return render_template('form3.html',rows=rows)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cursor = cur.execute("SELECT DISTINCT NAME, Time, Date FROM Attendance")
+    rows = cur.fetchall()
+    conn.close()
+    return render_template('form3.html', rows=rows)
 
-@app.route('/dashboard',methods=["GET","POST"])
+@app.route('/dashboard', methods=["GET", "POST"])
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/sendmail_form', methods=["GET", "POST"])
+def sendmail_form():
+    if request.method == "POST":
+        sender_email = request.form['sender_email']
+        sender_pass = request.form['sender_pass']
+        receiver_email = request.form['receiver_email']
 
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.application import MIMEApplication
-from email.mime.text import MIMEText
+        try:
+            conn = sqlite3.connect('information.db')
+            df = pd.read_sql_query("SELECT * FROM Attendance", conn)
+            df.to_csv("attendance.csv", index=False)
+            conn.close()
 
-def sendMail():
-    mssg=MIMEMultipart()
+            msg = MIMEMultipart()
+            msg['Subject'] = "Student Attendance Report"
+            msg['From'] = sender_email
+            msg['To'] = receiver_email
 
+            html = """\
+            <html>
+              <body>
+                <p>Hi,<br>
+                   Please find attached the latest attendance report.<br>
+                   <b>Regards,<br>Attendance System</b>
+                </p>
+              </body>
+            </html>
+            """
+            msg.attach(MIMEText(html, 'html'))
 
-    server=smtplib.SMTP("smtp.gmail.com",'587')
-    server.starttls()
-    print("Connected with the server")
-    user=input("Enter username:")
-    pwd=input("Enter password:")
-    server.login(user,pwd)
-    print("Login Successful!")
-    send=user
-    rcv=input("Enter Receiver's Email id:")
-    mssg["Subject"] = "Employee Report csv"
-    mssg["From"] = user
-    mssg["To"] = rcv
+            with open("attendance.csv", 'rb') as f:
+                part = MIMEApplication(f.read(), Name="attendance.csv")
+                msg.attach(part)
 
-    body='''
-        <html>
-        <body>
-         <h1>Employee Quarterly Report</h1>
-         <h2>Contains the details of all the employees</h2>
-         <p>Do not share confidential information with anyone.</p>
-        </body>
-        </html>
-         '''
+            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login(sender_email, sender_pass)
+            server.send_message(msg)
+            server.quit()
 
-    body_part=MIMEText(body,'html')
-    mssg.attach(body_part)
+            return "Mail sent successfully!"
+        except Exception as e:
+            return f"Error sending mail: {str(e)}"
 
-    with open("emp.csv",'rb') as f:
-        mssg.attach(MIMEApplication(f.read(),Name="emp.csv"))
-
-    server.sendmail(mssg["From"],mssg["To"],mssg.as_string())
-
-
+    return render_template("sendmail_form.html")
 
 
 if __name__ == '__main__':
     app.run(debug=True)
 
 
-
+# blrk yasi uhpp lbvb
