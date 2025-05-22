@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Attendance System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <style>
+        /* Reset & General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Full Black Background */
+        body {
+            background-color: black;
+            color: white;
+        }
+
+        /* Navbar */
+        #navbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 30px;
+            background-color: rgba(0, 0, 0, 0.9);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #00e6e6;
+        }
+
+        #navbar ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+        }
+
+        #navbar ul li {
+            margin: 0 15px;
+        }
+
+        #navbar ul li a {
+            color: #00e6e6;
+            text-decoration: none;
+            font-size: 1.3rem;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: 0.3s ease-in-out;
+            font-weight: 600;
+        }
+
+        #navbar ul li a:hover {
+            background: linear-gradient(90deg, #00e6e6, #ff00ff);
+            color: black;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        /* Home Section */
+        #home {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            padding: 100px;
+        }
+
+        /* Left Side Text */
+        .home-text {
+            width: 50%;
+            padding-right: 50px;
+        }
+
+        .home-text h2 {
+            font-size: 2.8rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff00ff, #00e6e6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            background-color: transparent;
+            color: #00e6e6;
+            border: 2px solid #00e6e6;
+            margin: 10px;
+            cursor: pointer;
+            transition: 0.3s ease-in-out;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: linear-gradient(90deg, #00e6e6, #ff00ff);
+            color: black;
+            border: none;
+            transform: scale(1.05);
+            box-shadow: 0px 0px 20px rgba(0, 230, 230, 0.7);
+        }
+
+        /* Right Side Image */
+        .home-image {
+            width: 50%;
+            text-align: right;
+        }
+
+        .home-image img {
+            max-width: 70%; /* Adjust this value for the desired size */
+            height: auto;
+            border-radius: 15px;
+            border: 3px solid #00e6e6;
+            transition: 0.3s ease-in-out;
+        }
+
+
+        .home-image img:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 0px 15px #ff00ff;
+        }
+
+        /* Contact Section */
+        #contact {
+            padding: 50px 20px;
+            text-align: center;
+        }
+
+        #contact form {
+            max-width: 500px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #00e6e6;
+        }
+
+        #contact input,
+        #contact textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 2px solid #00e6e6;
+            background-color: black;
+            color: white;
+            font-size: 1rem;
+        }
+
+        #contact input:focus,
+        #contact textarea:focus {
+            border: 2px solid #ff00ff;
+            outline: none;
+            box-shadow: 0px 0px 10px #ff00ff;
+        }
+
+        /* Footer */
+        footer {
+            background: black;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-top: 2px solid #00e6e6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav id="navbar">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="/how">Admin Login</a></li>
+        </ul>
+    </nav>
+
+    <section id="home">
+        <!-- Left Side: Text -->
+        <div class="home-text">
+            <h2>Attendance System using Face Recognition</h2>
+            <form action="/new" method="POST">
+                <button type="submit" class="btn">Register New Student</button>
+            </form>
+            <form action="#" method="post">
+                <button type="submit" class="btn">Mark Your Attendance</button>
+            </form>
+        </div>
+
+        <!-- Right Side: Image -->
+        <div class="home-image">
+            <img src="static/bg_1111.png" alt="Face Recognition System">
+        </div>
+    </section>
+
+    <section id="contact">
+        <h1
+            style="background: linear-gradient(90deg, #ff00ff, #00e6e6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Contact Us</h1>
+        <div>
+            <form action="#" method="POST">
+                <input type="text" name="name" placeholder="Enter Your Name">
+                <input type="email" name="email" placeholder="Enter Your Email">
+                <input type="number" name="phone" placeholder="Enter Your Contact Number">
+                <textarea name="message" cols="30" rows="5" placeholder="Your Feedback is valuable."></textarea>
+                <button type="submit" class="btn">Submit</button>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>© ;)!</p>
+    </footer>
+
+</body>
+
+</html>

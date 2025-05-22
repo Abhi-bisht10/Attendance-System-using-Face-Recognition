@@ -16,7 +16,7 @@ app = Flask(__name__)
 @app.route('/new', methods=['GET', 'POST'])
 def new():
     if request.method == "POST":
-        return render_template('index.html')
+        return render_template('registration_success.html')
     else:
         return "Everything is okay!"
 
@@ -42,7 +42,7 @@ def name():
 
         cam.release()
         cv2.destroyAllWindows()
-        return render_template('image.html')
+        return render_template('capture_success.html')
     else:
         return 'All is not well'
 
@@ -118,27 +118,38 @@ def recognize():
 
         cap.release()
         cv2.destroyAllWindows()
-        return render_template('first.html')
+        return render_template('attendance_success.html')
     else:
-        return render_template('main.html')
+        return render_template('home.html')
 
 @app.route('/how', methods=["GET", "POST"])
 def how():
-    return render_template('form.html')
+    if request.method == "POST":
+        username = request.form.get('username')
+        password = request.form.get('pass')
+        if username == "group53" and password == "12345":
+            today = date.today()
+            conn = sqlite3.connect('information.db')
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cursor = cur.execute("SELECT DISTINCT NAME, Time, Date FROM Attendance WHERE Date=?", (today,))
+            rows = cur.fetchall()
+            conn.close()
+            return render_template('daily_attendance.html', rows=rows)
+        else:
+            return render_template('error.html')
+    return render_template('view_attendance.html')
 
 @app.route('/data', methods=["GET", "POST"])
 def data():
-    if request.method == "POST":
-        today = date.today()
-        conn = sqlite3.connect('information.db')
-        conn.row_factory = sqlite3.Row
-        cur = conn.cursor()
-        cursor = cur.execute("SELECT DISTINCT NAME, Time, Date FROM Attendance WHERE Date=?", (today,))
-        rows = cur.fetchall()
-        conn.close()
-        return render_template('form2.html', rows=rows)
-    else:
-        return render_template('form1.html')
+    today = date.today()
+    conn = sqlite3.connect('information.db')
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+    cursor = cur.execute("SELECT DISTINCT NAME, Time, Date FROM Attendance WHERE Date=?", (today,))
+    rows = cur.fetchall()
+    conn.close()
+    return render_template('daily_attendance.html', rows=rows)
 
 @app.route('/whole', methods=["GET", "POST"])
 def whole():
@@ -148,7 +159,7 @@ def whole():
     cursor = cur.execute("SELECT DISTINCT NAME, Time, Date FROM Attendance")
     rows = cur.fetchall()
     conn.close()
-    return render_template('form3.html', rows=rows)
+    return render_template('all_attendance.html', rows=rows)
 
 @app.route('/dashboard', methods=["GET", "POST"])
 def dashboard():
@@ -198,8 +209,7 @@ def sendmail_form():
         except Exception as e:
             return f"Error sending mail: {str(e)}"
 
-    return render_template("sendmail_form.html")
-
+    return render_template("email_report.html")
 
 if __name__ == '__main__':
     app.run(debug=True)

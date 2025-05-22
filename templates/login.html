@@ -1,21 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>x
+<head>
     <title>Face Attendance Management System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--<link rel="stylesheet" href="/static/css/bootstrap.min.css">
-    <link rel="icon" href="/static/images/label.svg">
-    <link rel="stylesheet" href="/static/css/index.css">
-    <script src="/static/js/jquery.min.js"></script>
-    <script src="/static/js/popper.min.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/script.js"></script>
-    -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-sm bg-info navbar-dark fixed-top">
-    <h1>hi</h1>
         <div class="container-fluid">
             <div class="navbar-header">
                 <a class="navbar-brand" href="/">
@@ -23,29 +31,36 @@
                     Face Recognition Based Attendance System
                 </a>
             </div>
-
             <ul class="nav navbar-nav navbar-right">
-                <li class="navbar-brand" id="nav-brand"><span>
-                    Made with <span style="color: #e25555;">&#9829;</span> by Amlan Mohanty </span>
-                </li>
-                <li class="navbar-brand"><span id='login_info'>
-                    </span>
+                <li class="navbar-brand">
+                    <span>Made with <span style="color: #e25555;">&#9829;</span> by Group 53</span>
                 </li>
             </ul>
         </div>
     </nav>
-    <div class='container-fluid' id="cont">
-        <div class='bg-light card' id="cont2">
-            <br>
-            <h3> Login Here !!</h3>
-            <input type='text' id='username' placeholder="username" style="padding:5px 0px;margin:5px 0px;"> <br>
 
-            <input type='password' id='password' placeholder='password' style="padding:5px 0px;margin:5px 0px;"><br>
-            <input type='submit' id='lgn_btn' onclick="login()"> <br>
-
-
+    <div class="container">
+        <div class="login-container">
+            <h3 class="text-center mb-4">Admin Login</h3>
+            {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
